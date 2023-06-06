@@ -1843,6 +1843,31 @@ class FOWH0290Packet(Packet):
         return Packet.add_identifiers(pkt, station_id, FOWH0290Packet.__name__)
 
 
+class FOWH45Packet(Packet):
+    # This is for a WH45 Air Quality Monitor
+
+    #{"time" : "@0.084044s", "model" : "Fine Offset Electronics, WH0290", "id" : 204, "pm2_5_ug_m3" : 9, "pm10_0_ug_m3" : 10, "mic" : "CHECKSUM"}
+
+    IDENTIFIER = "Fine Offset Electronics, WH0290"
+
+    @staticmethod
+    def parse_json(obj):
+        pkt = dict()
+        pkt['usUnits'] = weewx.METRIC
+        pkt['station_id'] = obj.get('id')
+        pkt['temperature'] = Packet.get_float(obj, 'temperature_C')
+        pkt['humidity'] = Packet.get_float(obj, 'humidity')
+        pkt['pm2_5_atm'] = Packet.get_float(obj, 'pm2_5_ug_m3')
+        pkt['pm10_0_atm'] = Packet.get_float(obj, 'pm10_0_ug_m3')
+        pkt['co2_atm'] = Packet.get_int(obj, 'co2_ppm')
+        return FOWH45Packet.insert_ids(pkt)
+
+    @staticmethod
+    def insert_ids(pkt):
+        station_id = pkt.pop('station_id', '0000')
+        return Packet.add_identifiers(pkt, station_id, FOWH45Packet.__name__)
+      
+      
 class FOWH31LPacket(Packet):
     # This is for a WH31L lightning detector
 
